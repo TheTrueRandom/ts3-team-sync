@@ -8,7 +8,7 @@ set envs:
 
 create userMappings.json
 
-```json
+```
 [
   {
     "ts3Id": "<uniqueIdentifier of ts3 client>",
@@ -20,7 +20,7 @@ create userMappings.json
 ```
 
 http post to `/syncteams` to trigger ts3 sync users of team to different channels
-```json
+```
 [
   {
     "team": <1 or 2>,
