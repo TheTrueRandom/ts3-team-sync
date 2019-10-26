@@ -8,7 +8,7 @@ local.properties
 out/
 target/
 dependency-reduced-pom.xml
-userMappings.json
+config/userMappings.json
 
 
 # Logs
