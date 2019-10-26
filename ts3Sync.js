@@ -6,7 +6,7 @@ dotenv.config({path: '.env'});
 
 const userMappings = JSON.parse(fs.readFileSync('userMappings.json'));
 
-async function start() {
+async function ts3Sync(teams) {
     const ts3 = await TeamSpeak.connect({
         host: process.env.HOST,
         protocol: QueryProtocol.RAW,
@@ -26,14 +26,6 @@ async function start() {
         throw new Error('Could not determine channels for scrambling')
     }
 
-    //todo replace mock
-    const teams = [
-        {team: 1, id: 'woeifwe0'},
-        {team: 1, id: 'woeifwe1'},
-        {team: 2, id: 'woeifwe2'},
-        {team: 2, id: 'woeifwe3'}
-    ];
-
     for (const client of clients) {
         const userMapping = userMappings.find(u => u.ts3Id === client.uniqueIdentifier);
         if (!userMapping) {
@@ -46,10 +38,10 @@ async function start() {
             throw new Error(`Could not determine team for ${client.nickname}`)
         }
 
-        if (team === 2) {
+        if (team.team === 2) {
             await client.move(otherChannel.cid);
         }
     }
 }
 
-start();
+module.exports = {ts3Sync};
