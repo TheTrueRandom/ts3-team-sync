@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const {ts3Sync} = require('./ts3Sync');
+const {errorHandler} = require('express-api-error-handler');
 
 process.on('SIGINT', process.exit);
 
@@ -9,9 +10,20 @@ function startServer() {
 
     app.use(bodyParser.json());
 
-    app.post('/syncteams', (req, res, next) => {
-        ts3Sync(req.body);
+    app.post('/syncteams', async (req, res, next) => {
+        try {
+            const result = await ts3Sync(req.body);
+            return res.json(result)
+        } catch (e) {
+            next(e);
+        }
     });
+
+    app.use(errorHandler({
+        log: ({err}) => {
+            console.error(err);
+        },
+    }));
 
     app.listen(3000, err => {
         if (err) {
