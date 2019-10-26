@@ -11,6 +11,7 @@ function startServer() {
     app.use(bodyParser.json());
 
     app.post('/syncteams', async (req, res, next) => {
+        console.log(`syncteams request: ${JSON.stringify(req.body)}`);
         try {
             const result = await ts3Sync(req.body);
             return res.json(result)

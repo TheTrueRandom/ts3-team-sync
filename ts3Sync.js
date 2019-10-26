@@ -15,7 +15,7 @@ let connection = TeamSpeak.connect({
 });
 
 function getUserMappings() {
-    return JSON.parse(fs.readFileSync('userMappings.json', 'utf-8'));
+    return JSON.parse(fs.readFileSync('config/userMappings.json', 'utf-8'));
 }
 
 async function ts3Sync(teams) {
