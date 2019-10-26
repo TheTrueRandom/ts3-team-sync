@@ -23,7 +23,7 @@ async function ts3Sync(teams) {
     const userMappings = getUserMappings();
     const ts3 = await connection;
     const channels = await ts3.channelList();
-    const scrambleChannel = channels.reduce((c1, c2) => c1.totalClients > c2.totalClients ? c1 : c2);
+    const scrambleChannel = channels.reduce((c1, c2) => c1.totalClients > c2.totalClients ? c1 : c2); //todo get channel by most matched ids
     const otherChannel = channels.filter(c => c.neededTalkPower === 0).find(c => c.totalClients === 0);
     const clients = await ts3.clientList({client_type: 0, cid: scrambleChannel.cid});
 
@@ -34,13 +34,26 @@ async function ts3Sync(teams) {
     for (const client of clients) {
         const userMapping = userMappings.find(u => u.ts3Id === client.uniqueIdentifier);
         if (!userMapping) {
-            //todo smarter (1 missing is ok, maybe also try to match by nickname)
-            throw new Error(`No mapping for user ${client.nickname}`);
+            console.error(`No mapping for client ${client.uniqueIdentifier} (${client.nickname})`);
+            result.push({
+                nickname: client.nickname,
+                ts3Id: client.uniqueIdentifier,
+                moved: false,
+                error: 'No mapping'
+            });
+            continue;
         }
 
         const team = teams.find(t => userMapping.ids.includes(t.id));
         if (!team) {
-            throw new Error(`Could not determine team for ${client.nickname}`)
+            console.error(`No matched id for client ${client.uniqueIdentifier} (${client.nickname})`);
+            result.push({
+                nickname: client.nickname,
+                ts3Id: client.uniqueIdentifier,
+                moved: false,
+                error: 'No matched id'
+            });
+            continue;
         }
 
         const res = {
@@ -48,7 +61,8 @@ async function ts3Sync(teams) {
             ts3Id: client.uniqueIdentifier,
             channelName: scrambleChannel.name,
             channelId: scrambleChannel.cid,
-            moved: false, ...team
+            moved: false,
+            ...team
         };
 
         if (team.team === 2) {
