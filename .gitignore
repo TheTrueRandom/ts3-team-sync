@@ -9,6 +9,7 @@ out/
 target/
 dependency-reduced-pom.xml
 
+
 # Logs
 logs
 *.log

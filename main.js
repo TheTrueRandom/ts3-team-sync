@@ -1,7 +1,10 @@
 const {TeamSpeak, QueryProtocol} = require("ts3-nodejs-library");
 const dotenv = require('dotenv');
+const fs = require('fs');
 
 dotenv.config({path: '.env'});
+
+const userMappings = JSON.parse(fs.readFileSync('userMappings.json'));
 
 async function start() {
     const ts3 = await TeamSpeak.connect({
@@ -23,9 +26,29 @@ async function start() {
         throw new Error('Could not determine channels for scrambling')
     }
 
-    for (const client of clients.slice(0, clients.length / 2)) {
-        //todo sync team
-        await client.move(otherChannel.cid);
+    //todo replace mock
+    const teams = [
+        {team: 1, id: 'woeifwe0'},
+        {team: 1, id: 'woeifwe1'},
+        {team: 2, id: 'woeifwe2'},
+        {team: 2, id: 'woeifwe3'}
+    ];
+
+    for (const client of clients) {
+        const userMapping = userMappings.find(u => u.ts3Id === client.uniqueIdentifier);
+        if (!userMapping) {
+            //todo smarter (1 missing is ok, maybe also try to match by nickname)
+            throw new Error(`No mapping for user ${client.nickname}`);
+        }
+
+        const team = teams.find(t => userMapping.ids.includes(t.id));
+        if (!team) {
+            throw new Error(`Could not determine team for ${client.nickname}`)
+        }
+
+        if (team === 2) {
+            await client.move(otherChannel.cid);
+        }
     }
 }
 
