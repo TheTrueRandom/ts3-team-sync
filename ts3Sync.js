@@ -94,6 +94,12 @@ async function monitorUsers() {
     }
 }
 
-monitorUsers();
+async function getTsState() {
+    const ts3 = await connection;
+    const clients = await ts3.clientList({client_type: 0});
+    return clients.map(c => c.nickname)
+}
 
-module.exports = {ts3Sync};
+//monitorUsers();
+
+module.exports = {ts3Sync, getTsState};

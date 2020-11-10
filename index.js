@@ -1,6 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-const {ts3Sync} = require('./ts3Sync');
+const {ts3Sync, getTsState} = require('./ts3Sync');
 const {errorHandler} = require('express-api-error-handler');
 
 process.on('SIGINT', process.exit);
@@ -15,6 +15,15 @@ function startServer() {
         try {
             const result = await ts3Sync(req.body);
             return res.json(result)
+        } catch (e) {
+            next(e);
+        }
+    });
+
+    app.get('/state', async (req, res, next) => {
+        try {
+            const result = await getTsState(req.body);
+            return res.json({state: result});
         } catch (e) {
             next(e);
         }
