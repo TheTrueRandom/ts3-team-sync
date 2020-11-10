@@ -28,6 +28,7 @@ function startServer() {
                 polyfill[i] = result[i] || null;
             }
             return res.json({
+                count: result.length,
                 state: result,
                 polyfill: polyfill
             });
