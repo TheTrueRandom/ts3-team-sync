@@ -25,7 +25,7 @@ function startServer() {
             const result = await getTsState(req.body);
             const polyfill = [];
             for (let i = 0; i < 10; i++) {
-                polyfill[i] = result[i] || '';
+                polyfill[i] = result[i] || null;
             }
             return res.json({
                 state: result,
