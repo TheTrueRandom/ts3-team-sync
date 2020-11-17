@@ -23,14 +23,9 @@ function startServer() {
     app.get('/state', async (req, res, next) => {
         try {
             const result = await getTsState(req.body);
-            const polyfill = [];
-            for (let i = 0; i < 10; i++) {
-                polyfill[i] = result[i] || '';
-            }
             return res.json({
                 count: result.length,
                 state: result,
-                polyfill: polyfill
             });
         } catch (e) {
             next(e);
